@@ -1,0 +1,17 @@
+{
+  "name": "as4",
+  "type": "module",
+  "scripts": {
+    "test": "tsx watch src/index.ts",
+    "reminder": "tsx watch src/reminder.ts",
+    "rem-id": "tsx watch src/rem_id.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "hono": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1"
+  }
+}
