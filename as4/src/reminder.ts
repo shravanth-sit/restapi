@@ -1,115 +1,123 @@
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import ReminderService from "./RemDB";
 
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import { ReminderService } from './ReminderService'
+const app = new Hono();
+const rs = new ReminderService();
 
-const app = new Hono()
-const reminderService = new ReminderService()
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-app.post('/reminders', async (c) => {
+app.post("/reminders", async (c) => {
   try {
-    const { id, title, description, dueDate, isCompleted } = await c.req.json()
-    const response = reminderService.createReminder(id, title, description, dueDate, isCompleted)
-    return c.json(response, 201)
+    const { id, title, description, dueDate, isCompleted } = await c.req.json();
+    const response = rs.createReminder(
+      id,
+      title,
+      description,
+      dueDate,
+      isCompleted
+    );
+    return c.json(response, 201);
   } catch (error) {
-    return c.json({ error: error.message }, 400)
+    return c.json({ error: (error as Error).message }, 400);
   }
-})
+});
 
-app.get('/reminders/:id', (c) => {
+app.get("/reminders/:id", (c) => {
   try {
-    const id = c.req.param('id')
-    const reminder = reminderService.getReminder(id)
-    return c.json(reminder, 200)
+    const id = c.req.param("id");
+    const reminder = rs.getReminder(id);
+    return c.json(reminder, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.get('/reminders', (c) => {
+app.get("/reminders", (c) => {
   try {
-    const reminders = reminderService.getAllReminders()
-    return c.json(reminders, 200)
+    const reminders = rs.getAllReminders();
+    return c.json(reminders, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.patch('/reminders/:id', async (c) => {
+app.patch("/reminders/:id", async (c) => {
   try {
-    const id = c.req.param('id')
-    const updates = await c.req.json()
-    const response = reminderService.updateReminder(id, updates)
-    return c.json(response, 200)
+    const id = c.req.param("id");
+    const updates = await c.req.json();
+    const response = rs.updateReminder(id, updates);
+    return c.json(response, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 400)
+    return c.json({ error: (error as Error).message }, 400);
   }
-})
+});
 
-app.delete('/reminders/:id', (c) => {
+app.delete("/reminders/:id", (c) => {
   try {
-    const id = c.req.param('id')
-    const response = reminderService.deleteReminder(id)
-    return c.json(response, 200)
+    const id = c.req.param("id");
+    const response = rs.deleteReminder(id);
+    return c.json(response, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.post('/reminders/:id/mark-completed', (c) => {
+app.post("/reminders/:id/mark-completed", (c) => {
   try {
-    const id = c.req.param('id')
-    const response = reminderService.markCompleted(id)
-    return c.json(response, 200)
+    const id = c.req.param("id");
+    const response = rs.markCompleted(id);
+    return c.json(response, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.post('/reminders/:id/unmark-completed', (c) => {
+app.post("/reminders/:id/unmark-completed", (c) => {
   try {
-    const id = c.req.param('id')
-    const response = reminderService.unmarkCompleted(id)
-    return c.json(response, 200)
+    const id = c.req.param("id");
+    const response = rs.unmarkCompleted(id);
+    return c.json(response, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.get('/reminders/completed', (c) => {
+app.get("/remcompleted", (c) => {
   try {
-    const reminders = reminderService.getCompletedReminders()
-    return c.json(reminders, 200)
+    const reminders = rs.getCompletedReminders();
+    return c.json(reminders, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.get('/reminders/not-completed', (c) => {
+app.get("/not-completed", (c) => {
   try {
-    const reminders = reminderService.getNotCompletedReminders()
-    return c.json(reminders, 200)
+    const reminders = rs.getNotCompletedReminders();
+    return c.json(reminders, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-app.get('/reminders/due-today', (c) => {
+app.get("/due-today", (c) => {
   try {
-    const reminders = reminderService.getDueTodayReminders()
-    return c.json(reminders, 200)
+    const reminders = rs.getDueTodayReminders();
+    return c.json(reminders, 200);
   } catch (error) {
-    return c.json({ error: error.message }, 404)
+    return c.json({ error: (error as Error).message }, 404);
   }
-})
+});
 
-serve({
-  fetch: app.fetch,
-  port: 3000
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
+serve(
+  {
+    fetch: app.fetch,
+    port: 3000,
+  },
+  (info) => {
+    console.log(`Server is running on http://localhost:${info.port}`);
+  }
+);

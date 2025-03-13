@@ -1,8 +1,8 @@
-
 export class ReminderService {
     private reminders = new Map<string, any>()
   
-    createReminder(id: string, title: string, description: string, dueDate: string, isCompleted: boolean) {
+    // Create a reminder
+    async createReminder(id: string, title: string, description: string, dueDate: string, isCompleted: boolean) {
       if (!id || !title || !description || !dueDate || typeof isCompleted !== 'boolean') {
         throw new Error('Invalid request body')
       }
@@ -11,7 +11,8 @@ export class ReminderService {
       return { message: 'Reminder created successfully' }
     }
   
-    getReminder(id: string) {
+    // Get a reminder by ID
+    async getReminder(id: string) {
       const reminder = this.reminders.get(id)
       if (!reminder) {
         throw new Error('Reminder not found')
@@ -19,14 +20,16 @@ export class ReminderService {
       return reminder
     }
   
-    getAllReminders() {
+    // Get all reminders
+    async getAllReminders() {
       if (this.reminders.size === 0) {
         throw new Error('No reminders found')
       }
       return Array.from(this.reminders.values())
     }
   
-    updateReminder(id: string, updates: Partial<{ title: string, description: string, dueDate: string, isCompleted: boolean }>) {
+    // Update a reminder
+    async updateReminder(id: string, updates: Partial<{ title: string, description: string, dueDate: string, isCompleted: boolean }>) {
       const reminder = this.reminders.get(id)
       if (!reminder) {
         throw new Error('Reminder not found')
@@ -37,14 +40,16 @@ export class ReminderService {
       return { message: 'Reminder updated successfully' }
     }
   
-    deleteReminder(id: string) {
+    // Delete a reminder
+    async deleteReminder(id: string) {
       if (!this.reminders.delete(id)) {
         throw new Error('Reminder not found')
       }
       return { message: 'Reminder deleted successfully' }
     }
   
-    markCompleted(id: string) {
+    // Mark a reminder as completed
+    async markCompleted(id: string) {
       const reminder = this.reminders.get(id)
       if (!reminder) {
         throw new Error('Reminder not found')
@@ -55,7 +60,8 @@ export class ReminderService {
       return { message: 'Reminder marked as completed' }
     }
   
-    unmarkCompleted(id: string) {
+    // Unmark a reminder as completed
+    async unmarkCompleted(id: string) {
       const reminder = this.reminders.get(id)
       if (!reminder) {
         throw new Error('Reminder not found')
@@ -66,7 +72,8 @@ export class ReminderService {
       return { message: 'Reminder unmarked as completed' }
     }
   
-    getCompletedReminders() {
+    // Get all completed reminders
+    async getCompletedReminders() {
       const completedReminders = Array.from(this.reminders.values()).filter(reminder => reminder.isCompleted)
       if (completedReminders.length === 0) {
         throw new Error('No completed reminders found')
@@ -74,7 +81,8 @@ export class ReminderService {
       return completedReminders
     }
   
-    getNotCompletedReminders() {
+    // Get all not completed reminders
+    async getNotCompletedReminders() {
       const notCompletedReminders = Array.from(this.reminders.values()).filter(reminder => !reminder.isCompleted)
       if (notCompletedReminders.length === 0) {
         throw new Error('No uncompleted reminders found')
@@ -82,8 +90,9 @@ export class ReminderService {
       return notCompletedReminders
     }
   
-    getDueTodayReminders() {
-      const today = new Date().toISOString().split('T')[0]
+    // Get reminders due today
+    async getDueTodayReminders() {
+      const today = new Date().toISOString().split('T')[0]  // Extract only the date part (YYYY-MM-DD)
       const dueTodayReminders = Array.from(this.reminders.values()).filter(reminder => reminder.dueDate === today)
       if (dueTodayReminders.length === 0) {
         throw new Error('No reminders due today')
@@ -91,3 +100,4 @@ export class ReminderService {
       return dueTodayReminders
     }
   }
+  
